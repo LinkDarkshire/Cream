@@ -109,6 +109,12 @@
     <Compile Include="DupeDetectionForm.Designer.cs">
       <DependentUpon>DupeDetectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="LibaryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LibaryForm.Designer.cs">
+      <DependentUpon>LibaryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="PostExtractionMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,6 +214,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DupeDetectionForm.resx">
       <DependentUpon>DupeDetectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LibaryForm.resx">
+      <DependentUpon>LibaryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PostExtractionMessageBox.resx">
       <DependentUpon>PostExtractionMessageBox.cs</DependentUpon>

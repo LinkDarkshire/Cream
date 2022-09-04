@@ -133,9 +133,9 @@ namespace GameManager {
         private void UpdateParent(bool updateIfTileView) {
             var parentForm = Owner as MainForm;
 
-            if (formInitialized && parentForm != null && (updateIfTileView || parentForm.ListView != View.Tile)) {
-                parentForm.Rebuild();
-            }
+            //if (formInitialized && parentForm != null && (updateIfTileView || parentForm.ListView != View.Tile)) {
+            //    parentForm.Rebuild();
+            //}
         }
 
         private void SettingsForm_FormClosed(object sender, FormClosedEventArgs e) {
