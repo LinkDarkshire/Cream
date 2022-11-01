@@ -21,6 +21,8 @@ namespace GameManager {
         private bool listHadFocusBeforeShowingImage = false;
         private bool enlargedImageIsThumb = false;
         private bool arcConvCreated = false;
+        private string searchText;
+        private MainForm main;
         private readonly string arcConvPath = Path.Combine(Path.GetTempPath(), "arc_conv_r54.exe");
 
         public View ListView { get { return gameList.View; } }
@@ -39,10 +41,10 @@ namespace GameManager {
             }
         }
 
-        public LibaryForm() {
+        public LibaryForm(MainForm mainForm) {
             InitializeComponent();
             Icon = Properties.Resources.DLSIconVectorized;
-
+            main = mainForm;
             foreach (Control c in Controls) {
                 c.Font = Settings.Instance.GlobalFont;
             }
@@ -515,10 +517,22 @@ namespace GameManager {
                 var translatorProcessInfo = new ProcessStartInfo();
                 var resolutionChanged = false;
                 var screenResolution = game.UseCustomResolution ? game.CustomResolution : Settings.Instance.DefaultResolution;
+                if (game.IsSWFGame)
+                {
+                    gameProcessInfo = new ProcessStartInfo(game.Path)
+                    {
+                        Arguments = Path.GetFileName(game.Path),
+                        UseShellExecute = false,
+                        WorkingDirectory = Path.GetDirectoryName(game.Path),
+                        FileName = System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\Player\\FlashPlayer.exe",
+                        Verb = "OPEN"
+                    };
+                    Process.Start(gameProcessInfo);
+                }
 
                 //Only change resolution by default when launching executable files
                 if (!game.UseCustomResolution && Path.GetExtension(game.Path).ToLower() != ".exe") {
-                    screenResolution = null;
+                screenResolution = null;
                 }
 
                 //Check if the game should be run with AGTH and a translator or alone
@@ -1240,7 +1254,7 @@ namespace GameManager {
 				openHVDBToolStripMenuItem.Enabled = selectedGame.RJCode != null && selectedGame.IsOnHVDB;
                 extractCgToolStripMenuItem.Enabled = selectedGame.IsRpgMakerGame || selectedGame.WolfRpgMakerVersion != null;
 
-                if (selectedGame.Author != null && selectedGame.Author.Name == searchBar.SearchBox.Text) {
+                if (selectedGame.Author != null && selectedGame.Author.Name == searchText) {
                     filterOnCircleToolStripMenuItem.Text = "Unfilter on circle";
                 }
                 else {
@@ -1320,13 +1334,9 @@ namespace GameManager {
             var selectedGame = gameList.SelectedObject as Game;
 
             if (selectedGame != null && selectedGame.Author != null && selectedGame.Author.Name != null) {
-                if (searchBar.SearchBox.Text != selectedGame.Author.Name) {
-                    searchBar.Visible = true;
-                    searchBar.SearchBox.Text = selectedGame.Author.Name;
+                if (searchText != selectedGame.Author.Name) {
+                    searchText = selectedGame.Author.Name;
                     gameList.Focus();
-                }
-                else {
-                    searchBar.Visible = false;
                 }
             }
         }
@@ -1547,10 +1557,6 @@ namespace GameManager {
             }
         }
 
-        private void viewSearchBar_Click(object sender, EventArgs e) {
-            searchBar.Visible = !searchBar.Visible;
-        }
-
         private void viewDetails_Click(object sender, EventArgs e) {
             if (gameList.View != View.Details) {
                 gameList.View = View.Details;
@@ -1567,16 +1573,22 @@ namespace GameManager {
             }
         }
 
-        private void searchBar_SearchTextChanged(object sender, EventArgs e) {
-            FilterList(searchBar.SearchBox.Text);
+        public void seachBox_startSearch(string search)
+        {
+            searchText = search;
+            FilterList(search);
         }
+
+        //private void searchBar_SearchTextChanged(object sender, EventArgs e) {
+        //    FilterList(searchBar.SearchBox.Text);
+        //}
 
         //Gives the game list focus and executes hidden commands when the enter key is pressed
         private void searchBar_CommandKeyPressed(object sender, KeyEventArgs e) {
             e.SuppressKeyPress = true;
             gameList.Focus();
 			
-			switch (searchBar.SearchBox.Text) {
+			switch (searchText) {
 				
 				case "/createfiles":
 					//Creates a file in each game's directory containing the game's RJCode, title, circle, release date and where it can be found on DLSite

@@ -10,13 +10,18 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Button = System.Windows.Forms.Button;
+using Control = System.Windows.Forms.Control;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace GameManager {
     public partial class MainForm : Form {
         private Button currentBtn;
         private Form currentChildForm;
+        private LibaryForm libary;
         
         private readonly string arcConvPath = Path.Combine(Path.GetTempPath(), "arc_conv_r54.exe");
 
@@ -33,11 +38,10 @@ namespace GameManager {
                 return statusStripLabel.Text;
             }
         }
-
+        
         public MainForm() {
             InitializeComponent();
             Icon = Properties.Resources.DLSIconVectorized;
-
             foreach (Control c in Controls) {
                 c.Font = Settings.Instance.GlobalFont;
             }
@@ -126,24 +130,28 @@ namespace GameManager {
         private void buttonNewGames_Click(object sender, EventArgs e)
         {
             ActivateButtons(sender, RGBColors.color1);
-
+            searchBox.Visible = false;
         }
 
         private void buttonLibary_Click(object sender, EventArgs e)
         {
             ActivateButtons(sender, RGBColors.color2);
-            OpenChildForm(new LibaryForm());
+            libary = new LibaryForm(this);
+            OpenChildForm(libary);
+            searchBox.Visible = true;
         }
 
         private void buttonSettings_Click(object sender, EventArgs e)
         {
             ActivateButtons(sender, RGBColors.color3);
             OpenChildForm(new SettingsForm());
+            searchBox.Visible = false;
         }
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
             ActivateButtons(sender, RGBColors.color4);
+            searchBox.Visible = false;
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -159,6 +167,11 @@ namespace GameManager {
         private void panelLogo_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            libary.seachBox_startSearch(this.searchBox.Text);
         }
     }
 }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 
-namespace GameManager {
+namespace GameManager
+{
     /// <summary>
     /// A static class providing an application programming interface to the underlying data store.
     /// </summary>
-    static class Database {
+    static class Database
+    {
         private static Object writeLock = new Object();
         private static readonly string connectionString;
 
@@ -15,17 +17,20 @@ namespace GameManager {
         /// Ensures that the database is initialised with all the needed tables.
         /// Automatically run before the first database method is called.
         /// </summary>
-        static Database() {
+        static Database()
+        {
             connectionString = String.Format("Data Source={0};" + "Version=3;" +
                                              "Pooling=True;" + "Max Pool Size=5;" +
                                              "Page Size=4096;" + "Cache Size=4000;", //SQLite will use ~15 MB of RAM with these cache settings
                                               Path.Combine(Settings.ProgramDirectoryPath, Settings.RelativeDatabasePath));
-            
+
             //Create the database if it doesn't exist
-            using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
                 conn.Open();
 
-                using (SQLiteCommand query = conn.CreateCommand()) {
+                using (SQLiteCommand query = conn.CreateCommand())
+                {
                     query.CommandText =
                         @"BEGIN;
 
@@ -56,6 +61,7 @@ namespace GameManager {
                             Size integer DEFAULT NULL,
                             DLSiteFlags smallint NOT NULL,
                             IsRpgMakerGame tinyint NOT NULL,
+                            IsSWFGame tinyint NOT NULL,
                             WolfRpgMakerVersion varchar(255) DEFAULT NULL,
                             UseCustomResolution tinyint NOT NULL,
                             ResolutionWidth smallint DEFAULT NULL,
@@ -76,12 +82,14 @@ namespace GameManager {
                         COMMIT;";
                     long version = (long)query.ExecuteScalar();
 
-                    if (version < 1) {
+                    if (version < 1)
+                    {
                         query.CommandText = "PRAGMA user_version = 1;";
                         query.ExecuteNonQuery();
                     }
 
-                    if (version < 2) {
+                    if (version < 2)
+                    {
                         //Add the language column to the game table and set its value to Japanese for all games with an RJCode
                         query.CommandText = @"BEGIN;
                                               PRAGMA user_version = 2;
@@ -89,9 +97,10 @@ namespace GameManager {
                                               UPDATE Game SET Language = 'Japanese' WHERE RJCode IS NOT NULL;
                                               COMMIT;";
                         query.ExecuteNonQuery();
-                                              
+
                     }
-                    if (version < 3) {
+                    if (version < 3)
+                    {
                         //Remove all new lines from game titles that begin with a new line
                         query.CommandText = @"BEGIN;
                                               PRAGMA user_version = 3;
@@ -125,19 +134,25 @@ namespace GameManager {
         /// <summary>
         /// Returns all circles (game authors) stored in the database.
         /// </summary>
-        public static List<Circle> GetCircles() {
-            using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+        public static List<Circle> GetCircles()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
                 conn.Open();
 
-                using (SQLiteCommand query = new SQLiteCommand("Select * from Circle;", conn)) {
-                    using (SQLiteDataReader reader = query.ExecuteReader()) {
+                using (SQLiteCommand query = new SQLiteCommand("Select * from Circle;", conn))
+                {
+                    using (SQLiteDataReader reader = query.ExecuteReader())
+                    {
                         var circles = new List<Circle>();
                         int idPos = reader.GetOrdinal("CircleID");
                         int rgPos = reader.GetOrdinal("RGCode");
                         int namePos = reader.GetOrdinal("Name");
 
-                        while (reader.Read()) {
-                            circles.Add(new Circle() {
+                        while (reader.Read())
+                        {
+                            circles.Add(new Circle()
+                            {
                                 CircleID = reader.GetInt32(idPos),
                                 RGCode = (string)reader.GetValueOrNull(rgPos),
                                 Name = (string)reader.GetValueOrNull(namePos)
@@ -152,12 +167,16 @@ namespace GameManager {
         /// <summary>
         /// Returns all games stored in the database.
         /// </summary>
-        public static List<Game> GetGames() {
-            using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+        public static List<Game> GetGames()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
                 conn.Open();
 
-                using (SQLiteCommand query = new SQLiteCommand("Select * from Game;", conn)) {
-                    using (SQLiteDataReader reader = query.ExecuteReader()) {
+                using (SQLiteCommand query = new SQLiteCommand("Select * from Game;", conn))
+                {
+                    using (SQLiteDataReader reader = query.ExecuteReader())
+                    {
                         //Initialising a game requires data from these three tables
                         var games = new List<Game>();
                         var circles = Circle.GetCircles();
@@ -177,8 +196,8 @@ namespace GameManager {
                         int categoryPos = reader.GetOrdinal("Category");
                         int languagePos = reader.GetOrdinal("Language");
                         int tagsPos = reader.GetOrdinal("Tags");
-						int hvdbtagsPos = reader.GetOrdinal("HVDBTags");
-						int cvsPos = reader.GetOrdinal("CVs");
+                        int hvdbtagsPos = reader.GetOrdinal("HVDBTags");
+                        int cvsPos = reader.GetOrdinal("CVs");
                         int commentsPos = reader.GetOrdinal("Comments");
                         int circleIdPos = reader.GetOrdinal("CircleID");
                         int runWithAgthPos = reader.GetOrdinal("RunWithAgth");
@@ -187,18 +206,21 @@ namespace GameManager {
                         int sizePos = reader.GetOrdinal("Size");
                         int dlSiteFlagsPos = reader.GetOrdinal("DLSiteFlags");
                         int isRpgMakerGamePos = reader.GetOrdinal("IsRpgMakerGame");
+                        int isSWFGamePos = reader.GetOrdinal("IsSWFGame");
                         int wolfRpgMakerVersionPos = reader.GetOrdinal("WolfRpgMakerVersion");
                         int useCustomResolutionPos = reader.GetOrdinal("UseCustomResolution");
                         int resolutionWidthPos = reader.GetOrdinal("ResolutionWidth");
                         int resolutionHeightPos = reader.GetOrdinal("ResolutionHeight");
 
-                        while (reader.Read()) {
+                        while (reader.Read())
+                        {
                             int? circleID = reader.GetNullableInt32(circleIdPos);
                             int? x = reader.GetNullableInt32(resolutionWidthPos);
                             int? y = reader.GetNullableInt32(resolutionHeightPos);
                             int dlSiteFlags = reader.GetInt16(dlSiteFlagsPos);
 
-                            Game game = new Game() {
+                            Game game = new Game()
+                            {
                                 GameID = reader.GetInt32(idPos),
                                 RJCode = (string)reader.GetValueOrNull(rjPos),
                                 Title = (string)reader.GetValueOrNull(titlePos),
@@ -211,8 +233,8 @@ namespace GameManager {
                                 TimesPlayed = reader.GetInt32(timesPlayedPos),
                                 TimePlayed = TimeSpan.FromSeconds(reader.GetInt32(secondsPlayedPos)),
                                 Tags = (string)reader.GetValueOrNull(tagsPos),
-								HVDBTags = (string)reader.GetValueOrNull(hvdbtagsPos),
-								CVs = (string)reader.GetValueOrNull(cvsPos),
+                                HVDBTags = (string)reader.GetValueOrNull(hvdbtagsPos),
+                                CVs = (string)reader.GetValueOrNull(cvsPos),
                                 Category = (string)reader.GetValueOrNull(categoryPos),
                                 Language = (string)reader.GetValueOrNull(languagePos),
                                 Comments = (string)reader.GetValueOrNull(commentsPos),
@@ -224,8 +246,9 @@ namespace GameManager {
                                 IsReleasedOnJapaneseDLSite = (dlSiteFlags & 2) != 0,
                                 IsOnEnglishDLSite = (dlSiteFlags & 4) != 0,
                                 IsReleasedOnEnglishDLSite = (dlSiteFlags & 8) != 0,
-								IsOnHVDB = (dlSiteFlags & 16) != 0,
+                                IsOnHVDB = (dlSiteFlags & 16) != 0,
                                 IsRpgMakerGame = reader.GetBoolean(isRpgMakerGamePos),
+                                IsSWFGame = reader.GetBoolean(isSWFGamePos),
                                 WolfRpgMakerVersion = (string)reader.GetValueOrNull(wolfRpgMakerVersionPos),
                                 UseCustomResolution = reader.GetBoolean(useCustomResolutionPos),
                                 CustomResolution = x.HasValue && y.HasValue ? new ScreenResolution(x.Value, y.Value) : null,
@@ -235,21 +258,28 @@ namespace GameManager {
                              * Doing this outside of an SQL query is considered bad practise and slow.
                              * I might go back and change this if application startup time becomes an issue.
                              */
-                            if (circleID.HasValue) {
-                                foreach (Circle circle in circles) {
-                                    if (circleID == circle.CircleID) {
+                            if (circleID.HasValue)
+                            {
+                                foreach (Circle circle in circles)
+                                {
+                                    if (circleID == circle.CircleID)
+                                    {
                                         game.Author = circle;
                                         break;
                                     }
                                 }
                             }
 
-                            foreach (GameImage image in images) {
-                                if (image.GameID == game.GameID) {
-                                    if (image.IsListImage) {
+                            foreach (GameImage image in images)
+                            {
+                                if (image.GameID == game.GameID)
+                                {
+                                    if (image.IsListImage)
+                                    {
                                         game.ListImage = image;
                                     }
-                                    else {
+                                    else
+                                    {
                                         game.Images.Add(image);
                                     }
                                 }
@@ -265,12 +295,16 @@ namespace GameManager {
         /// <summary>
         /// Returns all images stored in the database.
         /// </summary>
-        public static List<GameImage> GetImages() {
-            using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+        public static List<GameImage> GetImages()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
                 conn.Open();
 
-                using (SQLiteCommand query = new SQLiteCommand("Select ImageID, ImagePath, IsListImage, IsCoverImage, GameID from Image;", conn)) {
-                    using (SQLiteDataReader reader = query.ExecuteReader()) {
+                using (SQLiteCommand query = new SQLiteCommand("Select ImageID, ImagePath, IsListImage, IsCoverImage, GameID from Image;", conn))
+                {
+                    using (SQLiteDataReader reader = query.ExecuteReader())
+                    {
                         var images = new List<GameImage>();
                         int idPos = reader.GetOrdinal("ImageID");
                         int pathPos = reader.GetOrdinal("ImagePath");
@@ -278,8 +312,10 @@ namespace GameManager {
                         int isCoverPos = reader.GetOrdinal("IsCoverImage");
                         int gameIdPos = reader.GetOrdinal("GameID");
 
-                        while (reader.Read()) {
-                            images.Add(new GameImage() {
+                        while (reader.Read())
+                        {
+                            images.Add(new GameImage()
+                            {
                                 ImageID = reader.GetInt32(idPos),
                                 ImagePath = (string)reader.GetValueOrNull(pathPos),
                                 IsCoverImage = reader.GetBoolean(isCoverPos),
@@ -296,16 +332,21 @@ namespace GameManager {
         /// <summary>
         /// Inserts a new circle or updates an existing one and returns the auto generated CircleID.
         /// </summary>
-        public static int SaveCircle(Circle circle) {
-            if (circle.Name == null) {
+        public static int SaveCircle(Circle circle)
+        {
+            if (circle.Name == null)
+            {
                 throw new ArgumentException("Circle name cannot be null.");
             }
 
-            lock (writeLock) {
-                using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+            lock (writeLock)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+                {
                     conn.Open();
 
-                    using (SQLiteCommand query = new SQLiteCommand(conn)) {
+                    using (SQLiteCommand query = new SQLiteCommand(conn))
+                    {
                         //The COALESCE function returns the first non-null expression
                         //This causes all circles with identical names to also have identical IDs and RGCodes
                         query.CommandText = @"BEGIN;
@@ -326,21 +367,25 @@ namespace GameManager {
         /// <summary>
         /// Inserts a new game or updates an existing one and returns the auto generated GameID.
         /// </summary>
-        public static int SaveGame(Game game) {
+        public static int SaveGame(Game game)
+        {
             int dlSiteFlags = (game.IsOnJapaneseDLSite ? 1 : 0) | (game.IsReleasedOnJapaneseDLSite ? 2 : 0) |
                               (game.IsOnEnglishDLSite ? 4 : 0) | (game.IsReleasedOnEnglishDLSite ? 8 : 0) | (game.IsOnHVDB ? 16 : 0);
 
-            lock (writeLock) {
-                using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+            lock (writeLock)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+                {
                     conn.Open();
 
-                    using (SQLiteCommand query = new SQLiteCommand(conn)) {
+                    using (SQLiteCommand query = new SQLiteCommand(conn))
+                    {
                         query.CommandText = @"BEGIN;
                                           INSERT OR REPLACE INTO game VALUES (  @GameID, @RJCode, @Title, @Path,
                                                                                 @Rating, @DLSRating, @Released, @Added, @LastPlayed,
                                                                                 @TimesPlayed, @SecondsPlayed, @CircleID, @Category,
                                                                                 @Tags, @Comments, @RunWithAgth, @AgthParameters, @Size,
-                                                                                @DLSiteFlags, @IsRpgMakerGame, @WolfRpgMakerVersion,
+                                                                                @DLSiteFlags, @IsRpgMakerGame, @IsSWFGame, @WolfRpgMakerVersion,
                                                                                 @UseCustomResolution, @ResolutionWidth, @ResolutionHeight, @Language, @RunWithChiiTrans, @HVDBTags, @CVs); 
                                           SELECT last_insert_rowid();
                                           COMMIT;";
@@ -358,8 +403,8 @@ namespace GameManager {
                         query.Parameters.AddWithValue("@CircleID", game.Author == null ? null : game.Author.CircleID);
                         query.Parameters.AddWithValue("@Category", game.Category);
                         query.Parameters.AddWithValue("@Tags", game.Tags);
-						query.Parameters.AddWithValue("@HVDBTags", game.HVDBTags);
-						query.Parameters.AddWithValue("@CVs", game.CVs);
+                        query.Parameters.AddWithValue("@HVDBTags", game.HVDBTags);
+                        query.Parameters.AddWithValue("@CVs", game.CVs);
                         query.Parameters.AddWithValue("@Comments", game.Comments);
                         query.Parameters.AddWithValue("@RunWithAgth", game.RunWithAgth);
                         query.Parameters.AddWithValue("@RunWithChiiTrans", game.RunWithChiiTrans);
@@ -367,6 +412,7 @@ namespace GameManager {
                         query.Parameters.AddWithValue("@Size", game.Size);
                         query.Parameters.AddWithValue("@DLSiteFlags", dlSiteFlags);
                         query.Parameters.AddWithValue("@IsRpgMakerGame", game.IsRpgMakerGame);
+                        query.Parameters.AddWithValue("@IsSWFGame", game.IsSWFGame);
                         query.Parameters.AddWithValue("@WolfRpgMakerVersion", game.WolfRpgMakerVersion);
                         query.Parameters.AddWithValue("@UseCustomResolution", game.UseCustomResolution);
                         query.Parameters.AddWithValue("@ResolutionWidth", game.CustomResolution != null ? game.CustomResolution.Width : (int?)null);
@@ -382,12 +428,16 @@ namespace GameManager {
         /// <summary>
         /// Inserts a new game image or updates an existing one and returns the auto generated ImageID.
         /// </summary>
-        public static int SaveImage(GameImage image) {
-            lock (writeLock) {
-                using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+        public static int SaveImage(GameImage image)
+        {
+            lock (writeLock)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+                {
                     conn.Open();
 
-                    using (SQLiteCommand query = new SQLiteCommand(conn)) {
+                    using (SQLiteCommand query = new SQLiteCommand(conn))
+                    {
                         query.CommandText = @"BEGIN;
                                           INSERT OR REPLACE INTO image VALUES (@ImageID, @ImagePath, @IsListImage, @IsCoverImage, @GameID);
                                           SELECT last_insert_rowid();
@@ -407,12 +457,16 @@ namespace GameManager {
         /// <summary>
         /// Deletes the game object from the database as well the images associated with it.
         /// </summary>
-        public static void DeleteGame(Game game) {
-            lock (writeLock) {
-                using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+        public static void DeleteGame(Game game)
+        {
+            lock (writeLock)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+                {
                     conn.Open();
 
-                    using (SQLiteCommand query = new SQLiteCommand(conn)) {
+                    using (SQLiteCommand query = new SQLiteCommand(conn))
+                    {
                         query.CommandText = @"BEGIN;
                                           DELETE FROM Image
                                           WHERE GameID = @GameID;
@@ -430,12 +484,16 @@ namespace GameManager {
         /// <summary>
         /// Deletes the circle object from the database as well the references to it.
         /// </summary>
-        public static void DeleteCircle(Circle circle) {
-            lock (writeLock) {
-                using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+        public static void DeleteCircle(Circle circle)
+        {
+            lock (writeLock)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+                {
                     conn.Open();
 
-                    using (SQLiteCommand query = new SQLiteCommand(conn)) {
+                    using (SQLiteCommand query = new SQLiteCommand(conn))
+                    {
                         query.CommandText = @"BEGIN;
                                           UPDATE Game
                                           SET CircleID = NULL
@@ -454,13 +512,17 @@ namespace GameManager {
         /// <summary>
         /// Deletes the image object from the databse.
         /// </summary>
-        public static void DeleteImage(GameImage image) {
-            lock (writeLock) {
-                using (SQLiteConnection conn = new SQLiteConnection(connectionString)) {
+        public static void DeleteImage(GameImage image)
+        {
+            lock (writeLock)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+                {
                     conn.Open();
 
                     using (SQLiteCommand query = new SQLiteCommand(@"DELETE FROM image 
-                                                                 WHERE ImageID =" + image.ImageID + ";", conn)) {
+                                                                 WHERE ImageID =" + image.ImageID + ";", conn))
+                    {
                         query.ExecuteNonQuery();
                     }
                 }

@@ -5,16 +5,20 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GameManager {
-    public class Game {
+namespace GameManager
+{
+    public class Game
+    {
         private static List<Game> games;
 
         /// <summary>
         /// Retrieves a list containing all saved games from the database and caches the result.
         /// If the list has been previously retrieved, the cached list is returned. 
         /// </summary>
-        public static List<Game> GetGames() {
-            if (games == null) {
+        public static List<Game> GetGames()
+        {
+            if (games == null)
+            {
                 games = Database.GetGames();
             }
             return games;
@@ -39,9 +43,9 @@ namespace GameManager {
         public string Category { get; set; }
         public string Language { get; set; }
         public string Tags { get; set; }
-		public string HVDBTags { get; set; }
-		public string CVs { get; set; }
-		public string HVDBTitle { get; set; }
+        public string HVDBTags { get; set; }
+        public string CVs { get; set; }
+        public string HVDBTitle { get; set; }
         public string Comments { get; set; }
         public GameImage ListImage { set; get; }
         public List<GameImage> Images { set; get; }
@@ -53,22 +57,28 @@ namespace GameManager {
         public bool IsOnJapaneseDLSite { get; set; }
         public bool IsReleasedOnJapaneseDLSite { get; set; }
         public bool IsReleasedOnEnglishDLSite { get; set; }
-		public bool IsOnHVDB { get; set; }
+        public bool IsOnHVDB { get; set; }
         public bool IsRpgMakerGame { get; set; }
+        public bool IsSWFGame { get; set; }
         public string WolfRpgMakerVersion { get; set; }
         public bool UseCustomResolution { get; set; }
         public ScreenResolution CustomResolution { set; get; }
         private string rjCode;
 
-        public string RJCode {
-            set {
+        public string RJCode
+        {
+            set
+            {
                 rjCode = value;
             }
-            get {
-                if (!String.IsNullOrEmpty(rjCode) && Char.IsNumber(rjCode[0])) {
+            get
+            {
+                if (!String.IsNullOrEmpty(rjCode) && Char.IsNumber(rjCode[0]))
+                {
                     return "RJ" + rjCode;
                 }
-                else {
+                else
+                {
                     return rjCode;
                 }
             }
@@ -76,39 +86,51 @@ namespace GameManager {
 
         private Circle author;
 
-        public Circle Author {
-            set {
-                if (author != null) {
+        public Circle Author
+        {
+            set
+            {
+                if (author != null)
+                {
                     author.Deleted -= Author_Deleted;
                 }
 
-                if (value != null) {
+                if (value != null)
+                {
                     value.Deleted += Author_Deleted;
                 }
                 author = value;
             }
-            get {
+            get
+            {
                 return author;
             }
         }
 
         private GameImage coverImage = null;
 
-        public GameImage CoverImage {
-            get {
-                if (coverImage == null) {
+        public GameImage CoverImage
+        {
+            get
+            {
+                if (coverImage == null)
+                {
                     coverImage = Images.FirstOrDefault(image => image.IsCoverImage);
                 }
                 return coverImage;
             }
-            set {
+            set
+            {
                 coverImage = value;
 
-                foreach (var image in Images) {
-                    if (image == value) {
+                foreach (var image in Images)
+                {
+                    if (image == value)
+                    {
                         image.IsCoverImage = true;
                     }
-                    else {
+                    else
+                    {
                         image.IsCoverImage = false;
                     }
                 }
@@ -122,44 +144,55 @@ namespace GameManager {
 
         private bool deleted = false;
 
-        public Game() {
+        public Game()
+        {
             Images = new List<GameImage>();
             IsReleasedOnJapaneseDLSite = true;
             IsReleasedOnEnglishDLSite = true;
         }
 
-        protected void OnSaved(EventArgs e) {
+        protected void OnSaved(EventArgs e)
+        {
             var eventHandler = Saved;
 
-            if (eventHandler != null) {
+            if (eventHandler != null)
+            {
                 eventHandler(this, e);
             }
         }
 
-        public void Save(bool notifyListeners = true) {
+        public void Save(bool notifyListeners = true)
+        {
             Task sizeGetter = null;
 
-            if (deleted) {
+            if (deleted)
+            {
                 return;
             }
 
             //Check if this is the first time this game is saved
-            if (!GameID.HasValue) {
+            if (!GameID.HasValue)
+            {
                 AddedDate = DateTime.Now;
 
-                if (File.Exists(Path) || Directory.Exists(Path)) {
-					string path = Path;
-					if (File.Exists(path)) {
-						path = System.IO.Path.GetDirectoryName(path);
-					}
+                if (File.Exists(Path) || Directory.Exists(Path))
+                {
+                    string path = Path;
+                    if (File.Exists(path))
+                    {
+                        path = System.IO.Path.GetDirectoryName(path);
+                    }
                     IsRpgMakerGame = IOUtility.IsRpgMakerGame(Path);
                     WolfRpgMakerVersion = IOUtility.GetWolfRpgVersion(Path);
-					
-                    if (Title == null && Settings.Instance.GetTitleFromPath) {
+                    IsSWFGame = (System.IO.Path.GetExtension(Path).ToLower() == ".swf") ? true : false;
+
+                    if (Title == null && Settings.Instance.GetTitleFromPath)
+                    {
                         Title = new DirectoryInfo(path).Name;
                     }
 
-                    if (path != null && !Size.HasValue && Settings.Instance.AutoUpdateGameSize) {
+                    if (path != null && !Size.HasValue && Settings.Instance.AutoUpdateGameSize)
+                    {
                         sizeGetter = new Task(() => {
                             Size = IOUtility.GetDirectorySize(path) / 1024;
                             Save(false);
@@ -170,20 +203,24 @@ namespace GameManager {
 
             GameID = Database.SaveGame(this);
 
-            if (sizeGetter != null) {
+            if (sizeGetter != null)
+            {
                 sizeGetter.Start();
             }
 
-            if (!games.Contains(this)) {
+            if (!games.Contains(this))
+            {
                 games.Add(this);
             }
 
-            if (notifyListeners) {
+            if (notifyListeners)
+            {
                 OnSaved(EventArgs.Empty);
             }
         }
 
-        public void Delete() {
+        public void Delete()
+        {
             deleted = true;
             Database.DeleteGame(this);
             games.Remove(this);
@@ -193,7 +230,8 @@ namespace GameManager {
         /// Returns a shallow copy of this game.
         /// </summary>
         /// <returns></returns>
-        public Game Copy() {
+        public Game Copy()
+        {
             return (Game)MemberwiseClone();
         }
 
@@ -207,8 +245,10 @@ namespace GameManager {
         /// <exception cref="UriFormatException">Thrown if some extracted image URL is invalid. </exception>
         /// <exception cref="PageNotFoundException">Thrown if no DLSite page matches the game's RJCode. </exception>
         /// <exception cref="WebException">Thrown if a connection to DLSite cannot be established. </exception>
-        public void DownloadInfo(bool downloadImagesInParallel, Action<string> ReportDownloadProgress = null, CancellationToken? downloadCanceller = null) {
-            if (RJCode == null) {
+        public void DownloadInfo(bool downloadImagesInParallel, Action<string> ReportDownloadProgress = null, CancellationToken? downloadCanceller = null)
+        {
+            if (RJCode == null)
+            {
                 return;
             }
 
@@ -223,121 +263,152 @@ namespace GameManager {
             Task translatorTask = null;
             Task<bool> engPageDownloader = Task.Factory.StartNew(() => engDLSite.DownloadPageData());
             Task<bool> jpPageDownloader = Task.Factory.StartNew(() => jpDLSite.DownloadPageData()); ;
-            
-            if (Settings.Instance.DownloadRating) {
+
+            if (Settings.Instance.DownloadRating)
+            {
                 ratingDownloader = Task.Factory.StartNew(() => jpDLSite.DownloadRating());
             }
 
-            if (Settings.Instance.AutoUpdateGameSize) {
-				if (File.Exists(Path) || Directory.Exists(Path)) {
-					string path = Path;
-					if (File.Exists(path)) {
-						path = System.IO.Path.GetDirectoryName(path);
-					}
-					sizeGetter = Task.Factory.StartNew(() => {
-						return IOUtility.GetDirectorySize(path) / 1024;
-					});					
-				}
+            if (Settings.Instance.AutoUpdateGameSize)
+            {
+                if (File.Exists(Path) || Directory.Exists(Path))
+                {
+                    string path = Path;
+                    if (File.Exists(path))
+                    {
+                        path = System.IO.Path.GetDirectoryName(path);
+                    }
+                    sizeGetter = Task.Factory.StartNew(() => {
+                        return IOUtility.GetDirectorySize(path) / 1024;
+                    });
+                }
             }
 
-			IsRpgMakerGame = IOUtility.IsRpgMakerGame(Path);
+            IsRpgMakerGame = IOUtility.IsRpgMakerGame(Path);
             WolfRpgMakerVersion = IOUtility.GetWolfRpgVersion(Path);
-			
-            if (ReportDownloadProgress != null) {
+
+            if (ReportDownloadProgress != null)
+            {
                 ReportDownloadProgress("Downloading page " + jpDLSite.Url + "...");
             }
 
             //Getting the result of a page download throws an exception if a connection to the internet could not be established
-            try {
+            try
+            {
                 IsOnEnglishDLSite = engPageDownloader.Result;
                 IsOnJapaneseDLSite = jpPageDownloader.Result;
             }
-            catch (AggregateException e) {
+            catch (AggregateException e)
+            {
                 throw e.InnerException;
             }
-			
+
 
 
             IsReleasedOnEnglishDLSite = engDLSite.ReleasePageExists;
             IsReleasedOnJapaneseDLSite = jpDLSite.ReleasePageExists;
-			if (IsOnJapaneseDLSite) {
-				IsOnHVDB = jpDLSite.IsOnHVDB;
-			}
-			else if (IsOnEnglishDLSite) {
-				IsOnHVDB = engDLSite.IsOnHVDB;
-			}
-			else {
-				IsOnHVDB = false;
-			}
-			
+            if (IsOnJapaneseDLSite)
+            {
+                IsOnHVDB = jpDLSite.IsOnHVDB;
+            }
+            else if (IsOnEnglishDLSite)
+            {
+                IsOnHVDB = engDLSite.IsOnHVDB;
+            }
+            else
+            {
+                IsOnHVDB = false;
+            }
 
-            if (!IsOnEnglishDLSite && !IsOnJapaneseDLSite) {
+
+            if (!IsOnEnglishDLSite && !IsOnJapaneseDLSite)
+            {
                 throw new PageNotFoundException("No game with the code " + RJCode + " found.");
             }
-            else if (Settings.Instance.DLSiteLanguage == DLSitePage.Language.Japanese) {
-                if (IsOnJapaneseDLSite) {
+            else if (Settings.Instance.DLSiteLanguage == DLSitePage.Language.Japanese)
+            {
+                if (IsOnJapaneseDLSite)
+                {
                     page = jpDLSite;
                 }
-                else {
+                else
+                {
                     page = engDLSite;
                     preferredLanguageAvailable = false;
                 }
             }
-            else {
-                if (IsOnEnglishDLSite) {
+            else
+            {
+                if (IsOnEnglishDLSite)
+                {
                     page = engDLSite;
                 }
-                else {
+                else
+                {
                     page = jpDLSite;
                     preferredLanguageAvailable = false;
                 }
             }
 
-            if (preferredLanguageAvailable || Settings.Instance.UseAlternativeDLSiteLanguages) {
-				if (Settings.Instance.AutoSetCategory) {
-					Category = page.GetCategory();
-				}				
+            if (preferredLanguageAvailable || Settings.Instance.UseAlternativeDLSiteLanguages)
+            {
+                if (Settings.Instance.AutoSetCategory)
+                {
+                    Category = page.GetCategory();
+                }
                 Title = page.GetTitle();
 
 
-                if (Settings.Instance.DownloadTags) {
+                if (Settings.Instance.DownloadTags)
+                {
                     Tags = page.GetTags();
-					if (Settings.Instance.DownloadReviewTags) {
-						if (IsOnJapaneseDLSite) {
-							Tags = jpDLSite.GetAggrReviewTags(Tags);						
-							Tags = jpDLSite.GetReviewTags(Tags);													
-						}
-						if (IsOnEnglishDLSite) {
-							Tags = engDLSite.GetAggrReviewTags(Tags);
-							Tags = engDLSite.GetReviewTags(Tags);
-						}
-					}
-					Tags = Tags.Replace("R*pe", "Rape").Replace("Woman R*pes Man", "Woman Rapes Man").Replace("B*stiality", "Bestiality");	//remove censorship
-					if (IsOnJapaneseDLSite && !IsReleasedOnJapaneseDLSite) {
-						if (Settings.Instance.DLSiteLanguage == DLSitePage.Language.English) {
-							Tags = "/Announce/, " + Tags;
-						}
-						else {
-							Tags = "/予告中/, " + Tags;
-						}
-					}
-				}
-				if (Settings.Instance.DownloadHVDBInfo) {
-					if (IsOnHVDB) {
-						HVDBTags = page.GetHVDBTags();
-						CVs = page.GetHVDB_CVs();
-						HVDBTitle = page.GetHVDBTitle();
-						if (Settings.Instance.DLSiteLanguage == DLSitePage.Language.English && HVDBTitle != "") {
-							if (!IsOnEnglishDLSite || (IsOnEnglishDLSite && Settings.Instance.PreferHVDBEnglishTitle)) {
-								Title = HVDBTitle;
-							}
-						}
-					}
-				}
+                    if (Settings.Instance.DownloadReviewTags)
+                    {
+                        if (IsOnJapaneseDLSite)
+                        {
+                            Tags = jpDLSite.GetAggrReviewTags(Tags);
+                            Tags = jpDLSite.GetReviewTags(Tags);
+                        }
+                        if (IsOnEnglishDLSite)
+                        {
+                            Tags = engDLSite.GetAggrReviewTags(Tags);
+                            Tags = engDLSite.GetReviewTags(Tags);
+                        }
+                    }
+                    Tags = Tags.Replace("R*pe", "Rape").Replace("Woman R*pes Man", "Woman Rapes Man").Replace("B*stiality", "Bestiality");  //remove censorship
+                    if (IsOnJapaneseDLSite && !IsReleasedOnJapaneseDLSite)
+                    {
+                        if (Settings.Instance.DLSiteLanguage == DLSitePage.Language.English)
+                        {
+                            Tags = "/Announce/, " + Tags;
+                        }
+                        else
+                        {
+                            Tags = "/予告中/, " + Tags;
+                        }
+                    }
+                }
+                if (Settings.Instance.DownloadHVDBInfo)
+                {
+                    if (IsOnHVDB)
+                    {
+                        HVDBTags = page.GetHVDBTags();
+                        CVs = page.GetHVDB_CVs();
+                        HVDBTitle = page.GetHVDBTitle();
+                        if (Settings.Instance.DLSiteLanguage == DLSitePage.Language.English && HVDBTitle != "")
+                        {
+                            if (!IsOnEnglishDLSite || (IsOnEnglishDLSite && Settings.Instance.PreferHVDBEnglishTitle))
+                            {
+                                Title = HVDBTitle;
+                            }
+                        }
+                    }
+                }
             }
 
             //Use Google Translate to translate the title if the English page was not available
-            if (!preferredLanguageAvailable && Settings.Instance.DLSiteLanguage == DLSitePage.Language.English && Settings.Instance.UseAlternativeDLSiteLanguages && Settings.Instance.UseGoogleTranslateOnTitleAndTags) {
+            if (!preferredLanguageAvailable && Settings.Instance.DLSiteLanguage == DLSitePage.Language.English && Settings.Instance.UseAlternativeDLSiteLanguages && Settings.Instance.UseGoogleTranslateOnTitleAndTags)
+            {
                 translatorTask = TranslateTitleAndTags();
             }
 
@@ -346,11 +417,13 @@ namespace GameManager {
             Author = page.GetAuthor();
             Language = "Japanese";
 
-            if (Author != null) {
+            if (Author != null)
+            {
                 //Check if the database already contains an author with this RGCode before saving it
                 Author = Circle.GetCircles().FirstOrDefault(circle => circle.RGCode == Author.RGCode) ?? Author;
 
-                if (!Author.CircleID.HasValue) {
+                if (!Author.CircleID.HasValue)
+                {
                     Author.Save();
                 }
             }
@@ -358,89 +431,112 @@ namespace GameManager {
             GameImage coverImage = null;
             List<GameImage> sampleImages = null;
 
-            if (Settings.Instance.DownloadCoverImage) {
+            if (Settings.Instance.DownloadCoverImage)
+            {
                 coverImage = page.GetCoverImage();
             }
 
-            if (Settings.Instance.DownloadSampleImages) {
+            if (Settings.Instance.DownloadSampleImages)
+            {
                 //Sample images are sometimes missing from the English DLSite, so always download them from the Japanese one if available
-                if (IsOnJapaneseDLSite) {
+                if (IsOnJapaneseDLSite)
+                {
                     sampleImages = jpDLSite.GetSampleImages();
                 }
-                else {
+                else
+                {
                     sampleImages = page.GetSampleImages();
                 }
             }
 
-            if (downloadCanceller.HasValue && downloadCanceller.Value.IsCancellationRequested) {
+            if (downloadCanceller.HasValue && downloadCanceller.Value.IsCancellationRequested)
+            {
                 return;
             }
 
-            if (ListImage != null) {
+            if (ListImage != null)
+            {
                 Images.Add(ListImage);
             }
 
-            if (coverImage != null) {
+            if (coverImage != null)
+            {
                 Images.Add(coverImage);
             }
 
-            if (sampleImages != null) {
+            if (sampleImages != null)
+            {
                 Images.AddRange(sampleImages);
             }
 
-            if (ReportDownloadProgress != null) {
+            if (ReportDownloadProgress != null)
+            {
                 ReportDownloadProgress("0/" + Images.Count + " images downloaded.");
             }
 
             Action<GameImage> downloadImage = image => {
-                try {
+                try
+                {
                     image.Load();
                 }
-                catch (Exception e) {
-                    if (e is BadImageFormatException || e is UriFormatException) {
+                catch (Exception e)
+                {
+                    if (e is BadImageFormatException || e is UriFormatException)
+                    {
                         Images.Remove(image);
                     }
-                    else {
+                    else
+                    {
                         throw;
                     }
                 }
 
-                if (downloadCanceller.HasValue && downloadCanceller.Value.IsCancellationRequested) {
+                if (downloadCanceller.HasValue && downloadCanceller.Value.IsCancellationRequested)
+                {
                     return;
                 }
 
-                if (ReportDownloadProgress != null) {
+                if (ReportDownloadProgress != null)
+                {
                     ReportDownloadProgress(++imagesDownloaded + "/" + Images.Count + " images downloaded.");
                 }
             };
 
             var imageListCopy = Images.ToArray();
 
-            if (downloadImagesInParallel) {
+            if (downloadImagesInParallel)
+            {
                 Parallel.ForEach(imageListCopy, downloadImage);
             }
-            else {
-                foreach (var image in imageListCopy) {
+            else
+            {
+                foreach (var image in imageListCopy)
+                {
                     downloadImage(image);
                 }
             }
 
             Images.Remove(ListImage);
 
-            if (sizeGetter != null) {
+            if (sizeGetter != null)
+            {
                 Size = sizeGetter.Result;
             }
 
-            if (ratingDownloader != null) {
-                try {
+            if (ratingDownloader != null)
+            {
+                try
+                {
                     DLSRating = ratingDownloader.Result;
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     Logger.LogExceptionIfDebugging(e);
                 }
             }
 
-            if (translatorTask != null) {
+            if (translatorTask != null)
+            {
                 translatorTask.Wait();
             }
         }
@@ -450,13 +546,15 @@ namespace GameManager {
         /// <summary>
         /// Saves all images associated with this game to this game's image folder.
         /// </summary>
-        public void SaveImages() {
+        public void SaveImages()
+        {
             int counter = 1;
 
             Func<string, string> GetUnusedFileName = extension => {
                 string imagePath;
-                
-                do {
+
+                do
+                {
                     imagePath = System.IO.Path.Combine(RelativeImageFolderPath, counter.ToString()) + extension;
                     counter++;
                 } while (File.Exists(System.IO.Path.Combine(Settings.ProgramDirectoryPath, imagePath)));
@@ -465,13 +563,16 @@ namespace GameManager {
             };
 
             //Lock before saving the images to ensure that no two threads are competing for the same file name
-            lock (saveImageLock) {
-                if (ListImage != null) {
+            lock (saveImageLock)
+            {
+                if (ListImage != null)
+                {
                     ListImage.GameID = GameID.Value;
                     ListImage.Save(GetUnusedFileName(ListImage.ImageExtension));
                 }
 
-                if (Images != null) {
+                if (Images != null)
+                {
                     Images.ForEach(image => {
                         image.GameID = GameID.Value;
                         image.Save(GetUnusedFileName(image.ImageExtension));
@@ -483,13 +584,16 @@ namespace GameManager {
         /// <summary>
         /// Deletes all images associated with this game.
         /// </summary>
-        public void DeleteImages() {
-            if (ListImage != null) {
+        public void DeleteImages()
+        {
+            if (ListImage != null)
+            {
                 ListImage.Delete();
                 ListImage = null;
             }
 
-            if (Images != null && Images.Count != 0) {
+            if (Images != null && Images.Count != 0)
+            {
                 Images.ForEach(image => image.Delete());
                 Images.Clear();
             }
@@ -498,30 +602,37 @@ namespace GameManager {
         /// <summary>
         /// Uses Google Translate to translate this game's title and tags.
         /// </summary>
-        public Task TranslateTitleAndTags() {
+        public Task TranslateTitleAndTags()
+        {
             Task task = null;
             var translator = new GoogleTranslate("ja", "en");
             var input = new List<string>();
 
-            if (Title != null) {
+            if (Title != null)
+            {
                 input.Add(Title);
             }
 
-            if (input.Count > 0) {
+            if (input.Count > 0)
+            {
                 var translatorTask = Task.Factory.StartNew(() => translator.TranslateStrings(input.ToArray()));
 
                 task = translatorTask.ContinueWith(_ => {
-                    try {
+                    try
+                    {
                         var translatedStrings = translatorTask.Result;
 
-                        if (translatedStrings != null) {
-                            if (translatedStrings.Length > 0) {
+                        if (translatedStrings != null)
+                        {
+                            if (translatedStrings.Length > 0)
+                            {
                                 Title = translatedStrings[0];
                             }
 
                         }
                     }
-                    catch (Exception e) {
+                    catch (Exception e)
+                    {
                         Logger.LogExceptionIfDebugging(e);
                     }
                 }, TaskContinuationOptions.OnlyOnRanToCompletion);
@@ -530,21 +641,27 @@ namespace GameManager {
             return task;
         }
 
-        public override string ToString() {
-            if (String.IsNullOrWhiteSpace(Title)) {
-                if (String.IsNullOrWhiteSpace(RJCode)) {
+        public override string ToString()
+        {
+            if (String.IsNullOrWhiteSpace(Title))
+            {
+                if (String.IsNullOrWhiteSpace(RJCode))
+                {
                     return "<Untitled game>";
                 }
-                else {
+                else
+                {
                     return RJCode;
                 }
             }
-            else {
+            else
+            {
                 return Title;
             }
         }
 
-        private void Author_Deleted(object sender, EventArgs e) {
+        private void Author_Deleted(object sender, EventArgs e)
+        {
             Author = null;
         }
     }

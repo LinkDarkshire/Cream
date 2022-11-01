@@ -32,25 +32,29 @@ namespace GameManager {
             this.panelLogo = new System.Windows.Forms.Panel();
             this.pictureLogo = new System.Windows.Forms.PictureBox();
             this.panelTitleBar = new System.Windows.Forms.Panel();
+            this.buttonTop5 = new System.Windows.Forms.Button();
+            this.buttonTop4 = new System.Windows.Forms.Button();
+            this.buttonTop3 = new System.Windows.Forms.Button();
+            this.buttonTop2 = new System.Windows.Forms.Button();
+            this.buttonTop1 = new System.Windows.Forms.Button();
             this.panelShadow = new System.Windows.Forms.Panel();
             this.panelDesktop = new System.Windows.Forms.Panel();
-            this.buttonTop1 = new System.Windows.Forms.Button();
-            this.buttonTop2 = new System.Windows.Forms.Button();
-            this.buttonTop3 = new System.Windows.Forms.Button();
-            this.buttonTop4 = new System.Windows.Forms.Button();
-            this.buttonTop5 = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.seachBarPannel = new System.Windows.Forms.Panel();
+            this.searchBox = new System.Windows.Forms.TextBox();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
-            this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureLogo)).BeginInit();
             this.panelTitleBar.SuspendLayout();
+            this.statusStrip.SuspendLayout();
+            this.seachBarPannel.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMenu
             // 
             this.panelMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
+            this.panelMenu.Controls.Add(this.seachBarPannel);
             this.panelMenu.Controls.Add(this.buttonHelp);
             this.panelMenu.Controls.Add(this.buttonSettings);
             this.panelMenu.Controls.Add(this.buttonLibary);
@@ -63,21 +67,6 @@ namespace GameManager {
             this.panelMenu.Size = new System.Drawing.Size(458, 1101);
             this.panelMenu.TabIndex = 2;
             this.panelMenu.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMenu_Paint);
-            // 
-            // statusStrip
-            // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusStripLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 600);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 13, 0);
-            this.statusStrip.Size = new System.Drawing.Size(997, 22);
-            this.statusStrip.TabIndex = 3;
-            // 
-            // statusStripLabel
-            // 
-            this.statusStripLabel.Name = "statusStripLabel";
-            this.statusStripLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // buttonHelp
             // 
@@ -196,77 +185,23 @@ namespace GameManager {
             this.panelTitleBar.Size = new System.Drawing.Size(1392, 104);
             this.panelTitleBar.TabIndex = 5;
             // 
-            // panelShadow
+            // buttonTop5
             // 
-            this.panelShadow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(66)))), ((int)(((byte)(95)))));
-            this.panelShadow.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelShadow.Location = new System.Drawing.Point(458, 104);
-            this.panelShadow.Name = "panelShadow";
-            this.panelShadow.Size = new System.Drawing.Size(1392, 9);
-            this.panelShadow.TabIndex = 6;
-            // 
-            // panelDesktop
-            // 
-            this.panelDesktop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(121)))), ((int)(((byte)(167)))));
-            this.panelDesktop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelDesktop.Location = new System.Drawing.Point(458, 113);
-            this.panelDesktop.Name = "panelDesktop";
-            this.panelDesktop.Size = new System.Drawing.Size(1392, 988);
-            this.panelDesktop.TabIndex = 0;
-            // 
-            // buttonTop1
-            // 
-            this.buttonTop1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
-            this.buttonTop1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonTop1.FlatAppearance.BorderSize = 0;
-            this.buttonTop1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonTop1.ForeColor = System.Drawing.Color.White;
-            this.buttonTop1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop1.Location = new System.Drawing.Point(0, 0);
-            this.buttonTop1.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonTop1.Name = "buttonTop1";
-            this.buttonTop1.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
-            this.buttonTop1.Size = new System.Drawing.Size(278, 104);
-            this.buttonTop1.TabIndex = 1;
-            this.buttonTop1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.buttonTop1.UseVisualStyleBackColor = false;
-            // 
-            // buttonTop2
-            // 
-            this.buttonTop2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
-            this.buttonTop2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonTop2.FlatAppearance.BorderSize = 0;
-            this.buttonTop2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonTop2.ForeColor = System.Drawing.Color.White;
-            this.buttonTop2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop2.Location = new System.Drawing.Point(278, 0);
-            this.buttonTop2.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonTop2.Name = "buttonTop2";
-            this.buttonTop2.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
-            this.buttonTop2.Size = new System.Drawing.Size(278, 104);
-            this.buttonTop2.TabIndex = 2;
-            this.buttonTop2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.buttonTop2.UseVisualStyleBackColor = false;
-            // 
-            // buttonTop3
-            // 
-            this.buttonTop3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
-            this.buttonTop3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonTop3.FlatAppearance.BorderSize = 0;
-            this.buttonTop3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonTop3.ForeColor = System.Drawing.Color.White;
-            this.buttonTop3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop3.Location = new System.Drawing.Point(556, 0);
-            this.buttonTop3.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonTop3.Name = "buttonTop3";
-            this.buttonTop3.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
-            this.buttonTop3.Size = new System.Drawing.Size(278, 104);
-            this.buttonTop3.TabIndex = 3;
-            this.buttonTop3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop3.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.buttonTop3.UseVisualStyleBackColor = false;
+            this.buttonTop5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
+            this.buttonTop5.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonTop5.FlatAppearance.BorderSize = 0;
+            this.buttonTop5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonTop5.ForeColor = System.Drawing.Color.White;
+            this.buttonTop5.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop5.Location = new System.Drawing.Point(1112, 0);
+            this.buttonTop5.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonTop5.Name = "buttonTop5";
+            this.buttonTop5.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
+            this.buttonTop5.Size = new System.Drawing.Size(278, 104);
+            this.buttonTop5.TabIndex = 5;
+            this.buttonTop5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop5.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.buttonTop5.UseVisualStyleBackColor = false;
             // 
             // buttonTop4
             // 
@@ -286,23 +221,111 @@ namespace GameManager {
             this.buttonTop4.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.buttonTop4.UseVisualStyleBackColor = false;
             // 
-            // buttonTop5
+            // buttonTop3
             // 
-            this.buttonTop5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
-            this.buttonTop5.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonTop5.FlatAppearance.BorderSize = 0;
-            this.buttonTop5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonTop5.ForeColor = System.Drawing.Color.White;
-            this.buttonTop5.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop5.Location = new System.Drawing.Point(1112, 0);
-            this.buttonTop5.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonTop5.Name = "buttonTop5";
-            this.buttonTop5.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
-            this.buttonTop5.Size = new System.Drawing.Size(278, 104);
-            this.buttonTop5.TabIndex = 5;
-            this.buttonTop5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTop5.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.buttonTop5.UseVisualStyleBackColor = false;
+            this.buttonTop3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
+            this.buttonTop3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonTop3.FlatAppearance.BorderSize = 0;
+            this.buttonTop3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonTop3.ForeColor = System.Drawing.Color.White;
+            this.buttonTop3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop3.Location = new System.Drawing.Point(556, 0);
+            this.buttonTop3.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonTop3.Name = "buttonTop3";
+            this.buttonTop3.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
+            this.buttonTop3.Size = new System.Drawing.Size(278, 104);
+            this.buttonTop3.TabIndex = 3;
+            this.buttonTop3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop3.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.buttonTop3.UseVisualStyleBackColor = false;
+            // 
+            // buttonTop2
+            // 
+            this.buttonTop2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
+            this.buttonTop2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonTop2.FlatAppearance.BorderSize = 0;
+            this.buttonTop2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonTop2.ForeColor = System.Drawing.Color.White;
+            this.buttonTop2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop2.Location = new System.Drawing.Point(278, 0);
+            this.buttonTop2.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonTop2.Name = "buttonTop2";
+            this.buttonTop2.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
+            this.buttonTop2.Size = new System.Drawing.Size(278, 104);
+            this.buttonTop2.TabIndex = 2;
+            this.buttonTop2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.buttonTop2.UseVisualStyleBackColor = false;
+            // 
+            // buttonTop1
+            // 
+            this.buttonTop1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(97)))), ((int)(((byte)(139)))));
+            this.buttonTop1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonTop1.FlatAppearance.BorderSize = 0;
+            this.buttonTop1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonTop1.ForeColor = System.Drawing.Color.White;
+            this.buttonTop1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop1.Location = new System.Drawing.Point(0, 0);
+            this.buttonTop1.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonTop1.Name = "buttonTop1";
+            this.buttonTop1.Padding = new System.Windows.Forms.Padding(15, 0, 30, 0);
+            this.buttonTop1.Size = new System.Drawing.Size(278, 104);
+            this.buttonTop1.TabIndex = 1;
+            this.buttonTop1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonTop1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.buttonTop1.UseVisualStyleBackColor = false;
+            // 
+            // panelShadow
+            // 
+            this.panelShadow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(66)))), ((int)(((byte)(95)))));
+            this.panelShadow.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelShadow.Location = new System.Drawing.Point(458, 104);
+            this.panelShadow.Name = "panelShadow";
+            this.panelShadow.Size = new System.Drawing.Size(1392, 9);
+            this.panelShadow.TabIndex = 6;
+            // 
+            // panelDesktop
+            // 
+            this.panelDesktop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(121)))), ((int)(((byte)(167)))));
+            this.panelDesktop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelDesktop.Location = new System.Drawing.Point(458, 113);
+            this.panelDesktop.Name = "panelDesktop";
+            this.panelDesktop.Size = new System.Drawing.Size(1392, 988);
+            this.panelDesktop.TabIndex = 0;
+            // 
+            // statusStrip
+            // 
+            this.statusStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusStripLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 600);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 13, 0);
+            this.statusStrip.Size = new System.Drawing.Size(997, 22);
+            this.statusStrip.TabIndex = 3;
+            // 
+            // statusStripLabel
+            // 
+            this.statusStripLabel.Name = "statusStripLabel";
+            this.statusStripLabel.Size = new System.Drawing.Size(0, 15);
+            // 
+            // seachBarPannel
+            // 
+            this.seachBarPannel.Controls.Add(this.searchBox);
+            this.seachBarPannel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.seachBarPannel.Location = new System.Drawing.Point(0, 1045);
+            this.seachBarPannel.Name = "seachBarPannel";
+            this.seachBarPannel.Size = new System.Drawing.Size(458, 56);
+            this.seachBarPannel.TabIndex = 6;
+            // 
+            // searchBox
+            // 
+            this.searchBox.Location = new System.Drawing.Point(61, 16);
+            this.searchBox.Name = "searchBox";
+            this.searchBox.Size = new System.Drawing.Size(391, 26);
+            this.searchBox.TabIndex = 0;
+            this.searchBox.Visible = false;
+            this.searchBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // MainForm
             // 
@@ -317,17 +340,14 @@ namespace GameManager {
             this.KeyPreview = true;
             this.Name = "MainForm";
             this.Text = "Game Manager";
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
-            //this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
-            //this.Load += new System.EventHandler(this.MainForm_Load);
-            //this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
-            //this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
-            //this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.panelMenu.ResumeLayout(false);
             this.panelLogo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureLogo)).EndInit();
             this.panelTitleBar.ResumeLayout(false);
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
+            this.seachBarPannel.ResumeLayout(false);
+            this.seachBarPannel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -350,6 +370,8 @@ namespace GameManager {
         private System.Windows.Forms.Button buttonTop3;
         private System.Windows.Forms.Button buttonTop2;
         private System.Windows.Forms.Button buttonTop1;
+        private System.Windows.Forms.Panel seachBarPannel;
+        private System.Windows.Forms.TextBox searchBox;
     }
 }
 
