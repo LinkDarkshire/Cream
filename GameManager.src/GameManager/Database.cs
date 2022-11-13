@@ -61,7 +61,6 @@ namespace GameManager
                             Size integer DEFAULT NULL,
                             DLSiteFlags smallint NOT NULL,
                             IsRpgMakerGame tinyint NOT NULL,
-                            IsSWFGame tinyint NOT NULL,
                             WolfRpgMakerVersion varchar(255) DEFAULT NULL,
                             UseCustomResolution tinyint NOT NULL,
                             ResolutionWidth smallint DEFAULT NULL,
@@ -93,8 +92,8 @@ namespace GameManager
                         //Add the language column to the game table and set its value to Japanese for all games with an RJCode
                         query.CommandText = @"BEGIN;
                                               PRAGMA user_version = 2;
-                                              ALTER TABLE Game ADD Language varchar(255);
-                                              UPDATE Game SET Language = 'Japanese' WHERE RJCode IS NOT NULL;
+                                              ALTER TABLE game ADD Language varchar(255);
+                                              UPDATE game SET Language = 'Japanese' WHERE RJCode IS NOT NULL;
                                               COMMIT;";
                         query.ExecuteNonQuery();
 
@@ -104,7 +103,7 @@ namespace GameManager
                         //Remove all new lines from game titles that begin with a new line
                         query.CommandText = @"BEGIN;
                                               PRAGMA user_version = 3;
-                                              UPDATE Game SET Title = replace(Title, x'0a', '') WHERE Title LIKE x'0a' || '%';
+                                              UPDATE game SET Title = replace(Title, x'0a', '') WHERE Title LIKE x'0a' || '%';
                                               COMMIT;";
                         query.ExecuteNonQuery();
                     }
@@ -124,6 +123,15 @@ namespace GameManager
                                               PRAGMA user_version = 5;
                                               ALTER TABLE game ADD HVDBTags text DEFAULT NULL;
 											  ALTER TABLE game ADD CVs text DEFAULT NULL;
+                                              COMMIT;";
+                        query.ExecuteNonQuery();
+                    }
+                    if (version < 6)
+                    {
+                        //Add IsSWFGame
+                        query.CommandText = @"BEGIN;
+                                              PRAGMA user_version = 6;
+                                              ALTER TABLE game ADD IsSWFGame tinyint DEFAULT '0';
                                               COMMIT;";
                         query.ExecuteNonQuery();
                     }
@@ -206,6 +214,7 @@ namespace GameManager
                         int sizePos = reader.GetOrdinal("Size");
                         int dlSiteFlagsPos = reader.GetOrdinal("DLSiteFlags");
                         int isRpgMakerGamePos = reader.GetOrdinal("IsRpgMakerGame");
+
                         int isSWFGamePos = reader.GetOrdinal("IsSWFGame");
                         int wolfRpgMakerVersionPos = reader.GetOrdinal("WolfRpgMakerVersion");
                         int useCustomResolutionPos = reader.GetOrdinal("UseCustomResolution");

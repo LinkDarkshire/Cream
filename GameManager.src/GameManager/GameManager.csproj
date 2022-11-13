@@ -115,6 +115,7 @@
     <Compile Include="LibaryForm.Designer.cs">
       <DependentUpon>LibaryForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OldDatabase.cs" />
     <Compile Include="PostExtractionMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
